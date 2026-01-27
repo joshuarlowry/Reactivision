@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Bot UI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app-container">
+        <canvas id="bot-canvas"></canvas>
+        
+        <!-- Test Harness Overlay -->
+        <div id="test-harness">
+            <h3>Test Harness</h3>
+            <div class="control-group">
+                <label for="weather-select">Weather:</label>
+                <select id="weather-select">
+                    <option value="clear">Clear</option>
+                    <option value="rain">Rain</option>
+                    <option value="snow">Snow</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="bg-color">Background:</label>
+                <input type="color" id="bg-color" value="#87CEEB">
+            </div>
+            <div class="control-group">
+                <button id="talk-btn">Toggle Talking</button>
+            </div>
+            <div class="control-group">
+                <input type="text" id="speech-input" placeholder="Type to say...">
+                <button id="say-btn">Say</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
