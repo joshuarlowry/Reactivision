@@ -7,6 +7,39 @@ export class Character {
         this.isTalking = false;
         this.speechText = "";
         this.talkTimer = 0;
+        
+        // Pixel Art Configuration
+        this.pixelScale = 12; // Scale factor for the pixels
+        
+        // 1 = Body (Light Grey)
+        // 2 = Outline/Dark (Dark Grey)
+        // 3 = Eye/Accent (Cyan)
+        // 4 = Mouth (Black/Dark)
+        // 5 = Highlight (White)
+        this.spriteIdle = [
+            [0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0], // Antenna top
+            [0,0,0,0,0,0,2,3,3,2,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0], // Antenna stick
+            [0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0], // Head top
+            [0,0,0,2,1,1,1,1,1,1,1,1,2,0,0,0],
+            [0,0,0,2,1,3,3,1,1,3,3,1,2,0,0,0], // Eyes
+            [0,0,0,2,1,3,3,1,1,3,3,1,2,0,0,0],
+            [0,0,0,2,1,1,1,1,1,1,1,1,2,0,0,0],
+            [0,0,0,2,1,1,1,4,4,1,1,1,2,0,0,0], // Mouth (closed)
+            [0,0,0,2,1,1,1,1,1,1,1,1,2,0,0,0],
+            [0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0], // Neck
+            [0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Shoulders
+            [0,2,1,1,1,2,1,1,1,1,2,1,1,1,2,0], // Arms start
+            [0,2,1,1,1,2,1,5,5,1,2,1,1,1,2,0], // Chest
+            [0,2,1,1,1,2,1,1,1,1,2,1,1,1,2,0],
+            [0,2,2,2,2,2,1,1,1,1,2,2,2,2,2,0], // Hands/Waist
+            [0,0,0,0,0,2,1,1,1,1,2,0,0,0,0,0],
+            [0,0,0,0,0,2,1,1,1,1,2,0,0,0,0,0],
+            [0,0,0,0,0,2,2,0,0,2,2,0,0,0,0,0], // Legs split
+            [0,0,0,0,0,2,1,2,0,2,1,2,0,0,0,0],
+            [0,0,0,0,0,2,1,2,0,2,1,2,0,0,0,0],
+            [0,0,0,0,2,2,2,2,0,2,2,2,2,0,0,0]  // Feet
+        ];
     }
 
     resize() {
@@ -38,117 +71,100 @@ export class Character {
     }
 
     draw() {
-        const headRadius = 20;
-        const torsoLen = 50;
-        const legLen = 40;
+        const spriteHeight = this.spriteIdle.length * this.pixelScale;
+        const spriteWidth = this.spriteIdle[0].length * this.pixelScale;
         
-        // Key points
-        const feetY = this.y;
-        const hipY = feetY - legLen;
-        const neckY = hipY - torsoLen;
-        const headCy = neckY - headRadius;
+        // Calculate position to center horizontally and stand on ground
+        // this.x is center x, this.y is feet y
+        const drawX = Math.floor(this.x - spriteWidth / 2);
+        const drawY = Math.floor(this.y - spriteHeight);
 
-        // Stick Figure Drawing
-        this.ctx.strokeStyle = '#000';
-        this.ctx.lineWidth = 3;
-        this.ctx.fillStyle = '#000';
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-
-        // Head
-        this.ctx.beginPath();
-        this.ctx.arc(this.x, headCy, headRadius, 0, Math.PI * 2);
-        this.ctx.stroke();
-        this.ctx.fillStyle = '#FFF';
-        this.ctx.fill();
-
-        // Eyes
-        this.ctx.fillStyle = '#000';
-        this.ctx.beginPath();
-        this.ctx.arc(this.x - 7, headCy - 5, 2, 0, Math.PI * 2);
-        this.ctx.arc(this.x + 7, headCy - 5, 2, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        // Mouth (Talking Animation)
-        this.ctx.beginPath();
-        const mouthY = headCy + 8;
-        if (this.isTalking) {
-            const openAmount = 2 + Math.abs(Math.sin(this.talkTimer)) * 4;
-            this.ctx.ellipse(this.x, mouthY, 6, openAmount, 0, 0, Math.PI * 2);
-        } else {
-            this.ctx.moveTo(this.x - 5, mouthY);
-            this.ctx.lineTo(this.x + 5, mouthY);
-        }
-        this.ctx.stroke();
-
-        // Torso
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x, neckY);
-        this.ctx.lineTo(this.x, hipY);
-        this.ctx.stroke();
-
-        // Arms
-        const shoulderY = neckY + 10;
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x, shoulderY);
-        this.ctx.lineTo(this.x - 30, shoulderY + 30); // Left Arm
-        this.ctx.moveTo(this.x, shoulderY);
-        this.ctx.lineTo(this.x + 30, shoulderY + 30); // Right Arm
-        this.ctx.stroke();
-
-        // Legs
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x, hipY);
-        this.ctx.lineTo(this.x - 20, feetY);
-        this.ctx.moveTo(this.x, hipY);
-        this.ctx.lineTo(this.x + 20, feetY);
-        this.ctx.stroke();
+        this.drawSprite(drawX, drawY);
 
         // Speech Bubble
         if (this.speechText) {
-            this.drawSpeechBubble(this.x + 40, headCy - 40, this.speechText);
+            this.drawPixelSpeechBubble(drawX + spriteWidth, drawY, this.speechText);
         }
     }
 
-    drawSpeechBubble(x, y, text) {
+    drawSprite(startX, startY) {
+        const palette = {
+            1: '#C0C0C0', // Silver
+            2: '#2F2F2F', // Dark Grey/Black Outline
+            3: '#00FFFF', // Cyan Eyes
+            4: '#2F2F2F', // Mouth Base
+            5: '#FFFFFF'  // Highlight
+        };
+
+        for (let r = 0; r < this.spriteIdle.length; r++) {
+            for (let c = 0; c < this.spriteIdle[r].length; c++) {
+                let pixelType = this.spriteIdle[r][c];
+
+                // Animate Mouth
+                if (this.isTalking) {
+                    // Mouth coordinates in sprite grid: Row 8, Cols 7-8
+                    if (r === 8 && (c === 7 || c === 8)) {
+                        // Flashing mouth or opening
+                        if (Math.sin(this.talkTimer * 2) > 0) {
+                             pixelType = 3; // Light up mouth when talking
+                        }
+                    }
+                }
+
+                if (pixelType !== 0) {
+                    this.ctx.fillStyle = palette[pixelType];
+                    this.ctx.fillRect(
+                        startX + c * this.pixelScale, 
+                        startY + r * this.pixelScale, 
+                        this.pixelScale, 
+                        this.pixelScale
+                    );
+                }
+            }
+        }
+    }
+
+    drawPixelSpeechBubble(x, y, text) {
         const padding = 10;
-        this.ctx.font = '16px Arial';
+        this.ctx.font = '20px "Courier New", Courier, monospace'; // Pixel-ish font
+        this.ctx.textBaseline = 'top';
         const textMetrics = this.ctx.measureText(text);
         const textWidth = textMetrics.width;
+        const textHeight = 24; 
+        
         const bubbleWidth = textWidth + padding * 2;
-        const bubbleHeight = 34; 
+        const bubbleHeight = textHeight + padding * 2; 
 
-        // Adjust position so it doesn't go off screen
+        // Adjust position
         let drawX = x;
         if (drawX + bubbleWidth > this.canvas.width) {
             drawX = this.canvas.width - bubbleWidth - 10;
         }
-
-        this.ctx.fillStyle = 'white';
-        this.ctx.strokeStyle = 'black';
-        this.ctx.lineWidth = 2;
-
-        // Bubble rounded rect
-        this.ctx.beginPath();
-        this.ctx.roundRect(drawX, y - bubbleHeight, bubbleWidth, bubbleHeight, 5);
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        // Tail
-        // Only draw tail if bubble is close to head (simple check)
-        if (drawX === x) {
-             this.ctx.beginPath();
-             this.ctx.moveTo(drawX, y - 5);
-             this.ctx.lineTo(drawX - 10, y + 10);
-             this.ctx.lineTo(drawX + 15, y - 1);
-             this.ctx.fill();
-             // Re-stroke bubble border to cover tail overlap if needed, or just let it be
-             // Simplified tail drawing
-        }
         
+        // Shift up a bit
+        let drawY = y - bubbleHeight + 20;
+
+        // Draw Blocky Bubble
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.strokeStyle = '#000000';
+        this.ctx.lineWidth = 4;
+
+        this.ctx.fillRect(drawX, drawY, bubbleWidth, bubbleHeight);
+        this.ctx.strokeRect(drawX, drawY, bubbleWidth, bubbleHeight);
+
         // Text
-        this.ctx.fillStyle = 'black';
+        this.ctx.fillStyle = '#000000';
         this.ctx.textAlign = 'left';
-        this.ctx.fillText(text, drawX + padding, y - bubbleHeight + 22);
+        this.ctx.fillText(text, drawX + padding, drawY + padding);
+        
+        // Simple connecting block (tail)
+        if (drawX === x) {
+            this.ctx.fillStyle = '#FFFFFF';
+            this.ctx.fillRect(drawX - 8, drawY + bubbleHeight - 20, 10, 10);
+            this.ctx.strokeRect(drawX - 8, drawY + bubbleHeight - 20, 10, 10);
+            
+            // Cover the border overlap
+            this.ctx.fillRect(drawX, drawY + bubbleHeight - 20, 4, 10);
+        }
     }
 }
