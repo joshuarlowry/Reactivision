@@ -8,7 +8,7 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden; /* No scroll */
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', Courier, monospace; /* More retro font */
 }
 
 #app-container {
@@ -22,6 +22,11 @@ canvas#bot-canvas {
     display: block;
     width: 100%;
     height: 100%;
+    /* Pixel art scaling */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 /* Test Harness Styling */
@@ -31,16 +36,21 @@ canvas#bot-canvas {
     right: 20px;
     background: rgba(255, 255, 255, 0.9);
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-radius: 0; /* Boxy */
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0px rgba(0,0,0,0.5); /* Retro shadow */
     width: 250px;
     z-index: 100;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 #test-harness h3 {
     margin-bottom: 10px;
     text-align: center;
     color: #333;
+    text-transform: uppercase;
+    border-bottom: 2px solid #000;
+    padding-bottom: 5px;
 }
 
 .control-group {
@@ -52,24 +62,35 @@ canvas#bot-canvas {
 .control-group label {
     font-size: 12px;
     margin-bottom: 4px;
-    color: #666;
+    color: #000;
+    font-weight: bold;
 }
 
 .control-group select, 
 .control-group input[type="text"] {
     padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 2px solid #000;
+    border-radius: 0;
+    background: #fff;
+    font-family: inherit;
 }
 
 .control-group button {
     padding: 8px;
     background: #007bff;
     color: white;
-    border: none;
-    border-radius: 4px;
+    border: 2px solid #000;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.2s;
+    box-shadow: 2px 2px 0 #000;
+    font-family: inherit;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.control-group button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
 }
 
 .control-group button:hover {
@@ -79,6 +100,6 @@ canvas#bot-canvas {
 .control-group input[type="color"] {
     width: 100%;
     height: 30px;
-    border: none;
+    border: 2px solid #000;
     padding: 0;
 }

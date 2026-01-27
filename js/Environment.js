@@ -18,7 +18,7 @@ export class Environment {
         this.particles = []; // Reset particles on change
         // Initial population
         if (type !== 'clear') {
-            const count = type === 'rain' ? 100 : 200;
+            const count = type === 'rain' ? 80 : 150; // Fewer particles for cleaner look
             for (let i = 0; i < count; i++) {
                 this.particles.push(this.createParticle(true));
             }
@@ -30,18 +30,21 @@ export class Environment {
     }
 
     createParticle(randomY = false) {
-        const x = Math.random() * this.width;
-        const y = randomY ? Math.random() * this.height : -10;
+        const x = Math.floor(Math.random() * this.width);
+        const y = randomY ? Math.floor(Math.random() * this.height) : -10;
         const speed = this.weatherType === 'rain' 
-            ? 10 + Math.random() * 10 
-            : 1 + Math.random() * 2;
+            ? 12 + Math.random() * 8 
+            : 2 + Math.random() * 2;
         
+        // Pixel sizes
+        const size = this.weatherType === 'rain' ? 2 : Math.floor(Math.random() * 3 + 3);
+
         return {
             x,
             y,
             speed,
-            size: this.weatherType === 'rain' ? 2 : Math.random() * 3 + 1,
-            drift: this.weatherType === 'snow' ? Math.random() * 2 - 1 : 0
+            size,
+            drift: this.weatherType === 'snow' ? Math.floor(Math.random() * 3 - 1) : 0
         };
     }
 
@@ -49,7 +52,7 @@ export class Environment {
         if (this.weatherType === 'clear') return;
 
         // Add new particles to maintain density
-        const targetCount = this.weatherType === 'rain' ? 100 : 200;
+        const targetCount = this.weatherType === 'rain' ? 80 : 150;
         if (this.particles.length < targetCount) {
              this.particles.push(this.createParticle());
         }
@@ -75,29 +78,38 @@ export class Environment {
     }
 
     draw() {
+        this.ctx.imageSmoothingEnabled = false;
+
         // Draw Background
         this.ctx.fillStyle = this.backgroundColor;
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Draw Ground (Simple)
+        // Draw Ground (Pixel Art Style)
+        const groundHeight = 60;
+        const groundY = this.height - groundHeight;
+        
+        // Main ground
         this.ctx.fillStyle = '#4CAF50'; // Green grass
-        this.ctx.fillRect(0, this.height - 50, this.width, 50);
+        this.ctx.fillRect(0, groundY, this.width, groundHeight);
+        
+        // Top edge highlight/texture
+        this.ctx.fillStyle = '#66BB6A'; 
+        this.ctx.fillRect(0, groundY, this.width, 4);
 
         // Draw Weather
         this.ctx.fillStyle = this.weatherType === 'rain' ? '#0000FF' : '#FFFFFF';
-        this.ctx.strokeStyle = '#0000FF';
-        this.ctx.lineWidth = 1;
-
+        
         for (const p of this.particles) {
+            // Snap to grid for pixel effect (optional, but looks nice)
+            const px = Math.floor(p.x);
+            const py = Math.floor(p.y);
+
             if (this.weatherType === 'rain') {
-                this.ctx.beginPath();
-                this.ctx.moveTo(p.x, p.y);
-                this.ctx.lineTo(p.x, p.y + 10);
-                this.ctx.stroke();
+                // Rain drops are tall rectangles
+                this.ctx.fillRect(px, py, 2, 8);
             } else {
-                this.ctx.beginPath();
-                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                this.ctx.fill();
+                // Snow flakes are squares
+                this.ctx.fillRect(px, py, p.size, p.size);
             }
         }
     }
