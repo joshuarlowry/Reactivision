@@ -75,14 +75,16 @@ export class SpritePortraitCharacter {
         this.isTalking = talking;
     }
 
-    say(text) {
+    say(text, opts = {}) {
         this.speechText = text;
         this.isTalking = true;
         if (this.speechTimeout) clearTimeout(this.speechTimeout);
+        const timeoutMs = typeof opts.timeoutMs === 'number' ? opts.timeoutMs : Math.max(2000, text.length * 100);
         this.speechTimeout = setTimeout(() => {
             this.isTalking = false;
             this.speechText = "";
-        }, Math.max(2000, text.length * 100));
+        }, timeoutMs);
+        return timeoutMs;
     }
 
     update(dt = 16) {

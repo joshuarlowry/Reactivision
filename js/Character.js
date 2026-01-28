@@ -25,6 +25,9 @@ export class Character {
         // Preserve conversational state across swaps
         this._isTalking = false;
         this._speechText = '';
+        this._speechExpiresAt = 0;
+        this._speechClearTimeout = null;
+        this._speechId = 0;
 
         this.setType(type);
     }
@@ -41,9 +44,14 @@ export class Character {
         this._impl = CHARACTER_CATALOG[desired].create(this.canvas, this.ctx);
 
         // Re-apply state to new impl
-        if (this._speechText) {
-            this._impl.say?.(this._speechText);
+        const now = Date.now();
+        if (this._speechText && this._speechExpiresAt > now) {
+            const remainingMs = Math.max(0, this._speechExpiresAt - now);
+            this._impl.say?.(this._speechText, { timeoutMs: remainingMs });
         } else {
+            // Speech expired (or never existed)
+            this._speechText = '';
+            this._speechExpiresAt = 0;
             this._impl.setTalking?.(this._isTalking);
         }
         this._impl.resize?.();
@@ -61,7 +69,19 @@ export class Character {
     say(text) {
         this._speechText = text;
         this._isTalking = true;
-        this._impl?.say?.(text);
+        const timeoutMs = this._impl?.say?.(text) ?? Math.max(2000, text.length * 100);
+        const now = Date.now();
+        this._speechExpiresAt = now + timeoutMs;
+
+        // Ensure stale speech can't be resurrected later
+        this._speechId += 1;
+        const myId = this._speechId;
+        if (this._speechClearTimeout) clearTimeout(this._speechClearTimeout);
+        this._speechClearTimeout = setTimeout(() => {
+            if (this._speechId !== myId) return;
+            this._speechText = '';
+            this._speechExpiresAt = 0;
+        }, timeoutMs);
     }
 
     update(dt) {
