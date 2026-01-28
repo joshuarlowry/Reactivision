@@ -29,15 +29,14 @@ export class SpritePortraitCharacter {
         this.isTalking = false;
         this.speechText = "";
 
-        this.pose = 'front'; // front | front_blink | look_left_15 | look_left_30 | look_right_15 | look_right_30
+        this.pose = 'front'; // front | front_blink | look_left_15 | look_right_15
         this.poseTimeLeftMs = 0;
         this.nextIdleActionInMs = randBetween(1200, 3200);
 
         this.images = {
             front: null,
             front_blink: null,
-            look_left_15: null,
-            look_left_30: null
+            look_left_15: null
         };
         this.ready = false;
 
@@ -46,17 +45,15 @@ export class SpritePortraitCharacter {
 
     async loadSprites() {
         try {
-            const [front, blink, left15, left30] = await Promise.all([
+            const [front, blink, left15] = await Promise.all([
                 loadImage(`${this.basePath}/front.png`),
                 loadImage(`${this.basePath}/front_blink.png`),
-                loadImage(`${this.basePath}/look_left_15.png`),
-                loadImage(`${this.basePath}/look_left_30.png`)
+                loadImage(`${this.basePath}/look_left_15.png`)
             ]);
 
             this.images.front = front;
             this.images.front_blink = blink;
             this.images.look_left_15 = left15;
-            this.images.look_left_30 = left30;
             this.ready = true;
         } catch (e) {
             // Keep running even if an asset fails to load
@@ -111,9 +108,8 @@ export class SpritePortraitCharacter {
             this.nextIdleActionInMs = randBetween(1800, 4200);
         } else {
             // Look left/right (reuse left sprites and flip for right)
-            const angle = Math.random() < 0.55 ? 15 : 30;
             const dir = Math.random() < 0.5 ? 'left' : 'right';
-            this.pose = `look_${dir}_${angle}`;
+            this.pose = `look_${dir}_15`;
             this.poseTimeLeftMs = randBetween(600, 1200);
             this.nextIdleActionInMs = randBetween(2600, 6500);
         }
