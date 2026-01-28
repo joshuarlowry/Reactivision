@@ -7,7 +7,8 @@ export class BotApp {
         this.ctx = this.canvas.getContext('2d');
         
         this.environment = new Environment(this.canvas, this.ctx);
-        this.character = new Character(this.canvas, this.ctx);
+        const savedCharacter = window.localStorage?.getItem('characterType');
+        this.character = new Character(this.canvas, this.ctx, savedCharacter || 'robot');
         
         this.lastTime = 0;
         this.resize();
@@ -40,6 +41,19 @@ export class BotApp {
         this.character.say(text);
     }
 
+    setCharacter(type) {
+        this.character.setType(type);
+        try {
+            window.localStorage?.setItem('characterType', this.character.getType());
+        } catch {
+            // ignore storage errors
+        }
+    }
+
+    getCharacter() {
+        return this.character.getType();
+    }
+
     loop(timestamp) {
         const deltaTime = timestamp - this.lastTime;
         this.lastTime = timestamp;
@@ -52,7 +66,7 @@ export class BotApp {
 
     update(dt) {
         this.environment.update();
-        this.character.update();
+        this.character.update(dt);
     }
 
     draw() {
