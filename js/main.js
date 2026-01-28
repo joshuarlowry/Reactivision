@@ -4,11 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const app = new BotApp();
 
     // Test Harness Controls
+    const characterSelect = document.getElementById('character-select');
     const weatherSelect = document.getElementById('weather-select');
     const bgColorInput = document.getElementById('bg-color');
     const talkBtn = document.getElementById('talk-btn');
     const sayBtn = document.getElementById('say-btn');
     const speechInput = document.getElementById('speech-input');
+
+    // Character Control
+    if (characterSelect) {
+        characterSelect.value = app.getCharacter();
+        characterSelect.addEventListener('change', (e) => {
+            app.setCharacter(e.target.value);
+        });
+    }
 
     // Weather Control
     weatherSelect.addEventListener('change', (e) => {
