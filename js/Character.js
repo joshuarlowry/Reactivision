@@ -1,5 +1,6 @@
 import { PixelRobotCharacter } from './characters/PixelRobotCharacter.js';
 import { SpritePortraitCharacter } from './characters/SpritePortraitCharacter.js';
+import { GridPortraitCharacter } from './characters/GridPortraitCharacter.js';
 
 export const CHARACTER_CATALOG = {
     robot: {
@@ -10,6 +11,16 @@ export const CHARACTER_CATALOG = {
         label: 'Portrait (sprite)',
         create: (canvas, ctx) => new SpritePortraitCharacter(canvas, ctx, {
             basePath: 'assets/characters/portrait_male_glasses'
+        })
+    },
+    grid_portrait: {
+        label: 'Grid Portrait',
+        create: (canvas, ctx) => new GridPortraitCharacter(canvas, ctx, {
+            basePath: 'assets/characters/grid_portrait',
+            cellWidth: 256,
+            cellHeight: 320,
+            cols: 6,
+            rows: 6
         })
     }
 };
