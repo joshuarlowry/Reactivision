@@ -102,4 +102,8 @@ export class Character {
     draw() {
         this._impl?.draw?.();
     }
+
+    setExpression(expression) {
+        this._impl?.setExpression?.(expression);
+    }
 }

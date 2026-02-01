@@ -54,6 +54,10 @@ export class BotApp {
         return this.character.getType();
     }
 
+    setExpression(expression) {
+        this.character.setExpression(expression);
+    }
+
     loop(timestamp) {
         const deltaTime = timestamp - this.lastTime;
         this.lastTime = timestamp;
