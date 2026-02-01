@@ -63,7 +63,7 @@ const IDLE_EXPRESSIONS = [
     'eyes_closed',
     'happy',
     'winking',
-    'slightly_smile',
+    'slight_smile',
     'thinking',
     'pensive'
 ];

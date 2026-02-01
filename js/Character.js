@@ -17,8 +17,8 @@ export const CHARACTER_CATALOG = {
         label: 'Grid Portrait',
         create: (canvas, ctx) => new GridPortraitCharacter(canvas, ctx, {
             basePath: 'assets/characters/grid_portrait',
-            cellWidth: 256,
-            cellHeight: 320,
+            cellWidth: 170,
+            cellHeight: 170,
             cols: 6,
             rows: 6
         })
